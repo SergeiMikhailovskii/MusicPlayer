@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Player</string>
+    <string name="play">Play</string>
+    <string name="prev">Prev</string>
+    <string name="next">Next</string>
+    <string name="_0_00">0:00</string>
+    <string name="_2_00">2:00</string>
+    <string name="list">List</string>
+    <string name="songname">SongName</string>
+    <string name="artistname">ArtistName</string>
+    <string name="title">Title</string>
+    <string name="artist">Artist</string>
+    <string name="lyrics">Lyrics</string>
+    <string name="download">Download</string>
+    <string name="save_lyrics">Save lyrics</string>
+    <string-array name="context_menu_listview">
+        <item>Upload lyrics</item>
+        <item>Show lyrics</item>
+    </string-array>
+</resources>

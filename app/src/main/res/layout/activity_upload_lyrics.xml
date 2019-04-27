@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UploadLyricsActivity" >
+
+    <TextView
+        android:id="@+id/title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/title"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/title_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/title"
+        android:layout_below="@id/title_textview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_background"
+        tools:ignore="Autofill,TextFields" />
+
+    <TextView
+        android:id="@+id/artist_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/artist"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/title_edittext"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/artist_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/artist_textview"
+        android:layout_marginTop="16dp"
+        android:hint="@string/artist"
+        android:background="@drawable/edittext_background"
+        tools:ignore="Autofill, TextFields" />
+
+    <Button
+        android:id="@+id/download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/download"
+        android:layout_below="@id/artist_edittext"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/lyrics_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/download_button"
+        android:layout_marginTop="16dp"
+        android:text="@string/lyrics"/>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_lyrics"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/lyrics_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@id/lyrics_textview"
+        android:hint="@string/lyrics"
+        android:gravity="center"
+        android:layout_above="@id/save_button"
+        android:background="@drawable/edittext_background"
+        tools:ignore="Autofill,TextFields" />
+
+</RelativeLayout>

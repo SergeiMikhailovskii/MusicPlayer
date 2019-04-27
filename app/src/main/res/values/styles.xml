@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="RoundButtons" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="background">@drawable/round_buttons</item>
+        <item name="colorButtonNormal">#ffff00</item>
+        <item name="colorControlHighlight">#111111</item>
+    </style>
+
+</resources>
