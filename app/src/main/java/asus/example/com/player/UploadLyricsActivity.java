@@ -30,6 +30,7 @@ public class UploadLyricsActivity extends AppCompatActivity {
     private ContentValues contentValues;
     private EditText artistEdit;
     private EditText titleEdit;
+    private EditText lyricsEdit;
     private SQLiteDatabase database;
 
     @Override
@@ -38,6 +39,7 @@ public class UploadLyricsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload_lyrics);
         titleEdit = findViewById(R.id.title_edittext);
         artistEdit = findViewById(R.id.artist_edittext);
+        lyricsEdit = findViewById(R.id.lyrics_edittext);
         Button downloadButton = findViewById(R.id.download_button);
         Button saveButton = findViewById(R.id.save_button);
         title = getIntent().getStringExtra(Constants.TITLE);
@@ -54,9 +56,10 @@ public class UploadLyricsActivity extends AppCompatActivity {
     private View.OnClickListener downloadClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Download clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.download_clicked), Toast.LENGTH_SHORT).show();
             try {
                 lyrics = new NetworkLyricsDownload().execute(artist, title).get();
+                lyricsEdit.setText(lyrics);
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -70,19 +73,19 @@ public class UploadLyricsActivity extends AppCompatActivity {
         public void onClick(View v) {
             String artist = artistEdit.getText().toString();
             String title = titleEdit.getText().toString();
-            contentValues.put("SONG_TITLE", title);
-            contentValues.put("SONG_ARTIST", artist);
-            contentValues.put("SONG_LYRICS", lyrics);
-            database.insert("LYRICS", null, contentValues);
+            contentValues.put(Constants.SONG_TITLE, title);
+            contentValues.put(Constants.SONG_ARTIST, artist);
+            contentValues.put(Constants.SONG_LYRICS, lyrics);
+            database.insert(Constants.LYRICS_TABLE, null, contentValues);
             database.close();
-            Toast.makeText(getApplicationContext(), "Save clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.save_clicked), Toast.LENGTH_SHORT).show();
 
         }
     };
 
     private static class NetworkLyricsDownload extends AsyncTask<String, Void, String> {
 
-        private InputStream getInputStream(URL url){
+        private InputStream getInputStream(URL url) {
             try {
                 return url.openConnection().getInputStream();
             } catch (IOException e) {
@@ -95,37 +98,36 @@ public class UploadLyricsActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             String result = null;
             try {
-                String artist = strings[0];
+                String artist = strings[Constants.ARTIST_POSITION];
                 String artistArr[] = artist.split(" ");
-                String title = strings[1];
+                String title = strings[Constants.TITLE_POSITION];
                 String titleArr[] = title.split(" ");
 
                 StringBuilder urlStr = new StringBuilder("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=");
-                if (artistArr.length>1){
-                    for (int i = 0;i<artistArr.length-1;i++){
-                        urlStr.append(artistArr[i]).append("%20");
+                if (artistArr.length > 1) {
+                    for (int i = 0; i < artistArr.length - 1; i++) {
+                        urlStr.append(artistArr[i]).append(Constants.URL_SPLIT);
                     }
                 }
                 urlStr.append(artistArr[artistArr.length - 1]);
                 urlStr.append("&song=");
-                if (titleArr.length>1){
-                    for (int i = 0;i<titleArr.length-1;i++){
-                        urlStr.append(titleArr[i]).append("%20");
+                if (titleArr.length > 1) {
+                    for (int i = 0; i < titleArr.length - 1; i++) {
+                        urlStr.append(titleArr[i]).append(Constants.URL_SPLIT);
                     }
                 }
                 urlStr.append(titleArr[titleArr.length - 1]);
-                
+
                 URL url = new URL(urlStr.toString());
                 XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
                 factory.setNamespaceAware(false);
                 XmlPullParser xmlPullParser = factory.newPullParser();
                 xmlPullParser.setInput(getInputStream(url), "UTF-8");
                 int eventType = xmlPullParser.getEventType();
-                while (eventType!=XmlPullParser.END_DOCUMENT){
-                    if (eventType == XmlPullParser.START_TAG){
-                        if (xmlPullParser.getName().equalsIgnoreCase("lyric")){
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_TAG) {
+                        if (xmlPullParser.getName().equalsIgnoreCase(Constants.LYRIC_TAG)) {
                             result = xmlPullParser.nextText();
-                            Log.i(getClass().getName(), result);
                         }
                     }
                     eventType = xmlPullParser.next();

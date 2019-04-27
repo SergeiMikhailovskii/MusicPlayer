@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs;
-    private LayoutInflater  layoutInflater;
+    private LayoutInflater layoutInflater;
 
-    SongAdapter(Context context, ArrayList<Song> songs){
+    SongAdapter(Context context, ArrayList<Song> songs) {
         this.songs = songs;
         layoutInflater = LayoutInflater.from(context);
     }

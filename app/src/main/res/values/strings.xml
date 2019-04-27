@@ -13,6 +13,8 @@
     <string name="lyrics">Lyrics</string>
     <string name="download">Download</string>
     <string name="save_lyrics">Save lyrics</string>
+    <string name="download_clicked">Download clicked</string>
+    <string name="save_clicked">Save clicked</string>
     <string-array name="context_menu_listview">
         <item>Upload lyrics</item>
         <item>Show lyrics</item>
