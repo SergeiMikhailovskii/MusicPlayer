@@ -73,30 +73,32 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
         mp.start();
 
         Intent intentPrev = new Intent(Constants.ACTION_PREV);
-        PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(this, 0, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentPrev = PendingIntent.getBroadcast(this, Constants.PREV_CODE,
+                intentPrev, PendingIntent.FLAG_UPDATE_CURRENT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intentPrev);
 
         Intent intentPlay = new Intent(Constants.ACTION_PLAY);
-        PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(this, 1, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(this, Constants.PAUSE_CODE,
+                intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intentPlay);
 
         Intent intentNext = new Intent(Constants.ACTION_NEXT);
-        PendingIntent pendingIntentNext = PendingIntent.getBroadcast(this, 2, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentNext = PendingIntent.getBroadcast(this, Constants.NEXT_CODE,
+                intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intentNext);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.notification).
-                setContentTitle(songs.get(songPos).getTitle()).setContentText(songs.get(songPos).getArtist()).
-                addAction(R.drawable.previous, "Previous", pendingIntentPrev).addAction(R.drawable.pause, "Pause", pendingIntentPlay).
-                addAction(R.drawable.next, "Next", pendingIntentNext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).
+                setSmallIcon(R.drawable.notification).setContentTitle(songs.get(songPos).getTitle()).
+                setContentText(songs.get(songPos).getArtist()).
+                addAction(R.drawable.previous, Constants.ACTION_PREV, pendingIntentPrev).
+                addAction(R.drawable.pause, Constants.ACTION_PAUSE, pendingIntentPlay).
+                addAction(R.drawable.next, Constants.ACTION_NEXT, pendingIntentNext);
         Notification notification = builder.build();
 
-        //Чтобы нельзя было свайпнуть уведомление со шторки
-
-        //notification.flags = notification.flags|Notification.FLAG_ONGOING_EVENT;
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
-        Intent onPreparedIntent = new Intent("MEDIA_PLAYER_PREPARED");
+        Intent onPreparedIntent = new Intent(Constants.ACTION_MEDIA_PLAYER_PREPARED);
         LocalBroadcastManager.getInstance(this).sendBroadcast(onPreparedIntent);
 
     }

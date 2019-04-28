@@ -20,7 +20,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +27,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.MediaController;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +37,6 @@ import java.util.Objects;
 public class ListOfSongsActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
 
     private       ArrayList<Song> songsList;
-    private final String          TAG            = this.getClass().getSimpleName();
-    private final String          ARTIST         = "ARTIST";
-    private final String          SONG           = "SONG";
     private       MyService       musicService;
     private       Intent          playIntent;
     private       boolean         musicBounds    = false;
@@ -67,14 +62,11 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         SongAdapter adapter = new SongAdapter(this, songsList);
         songsListView.setAdapter(adapter);
         songsListView.setOnItemClickListener(onClickListener);
-//        songsListView.setOnItemLongClickListener(onLongClickListener);
         registerForContextMenu(songsListView);
         setController();
         registerReceiver(NotificationReceiver, new IntentFilter(Constants.ACTION_PREV));
         registerReceiver(NotificationReceiver, new IntentFilter(Constants.ACTION_NEXT));
         registerReceiver(NotificationReceiver, new IntentFilter(Constants.ACTION_PLAY));
-        Toast.makeText(getApplicationContext(), "On create finished!", Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -100,7 +92,8 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
             setController();
             paused = false;
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(onPrepareReceiver, new IntentFilter("MEDIA_PLAYER_PREPARED"));
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(onPrepareReceiver, new IntentFilter(Constants.ACTION_MEDIA_PLAYER_PREPARED));
     }
 
     @Override
@@ -132,16 +125,12 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
                 return true;
             } else {
-
-                Log.v(TAG,"Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
-            Log.v(TAG,"Permission is granted");
             return true;
         }
     }
@@ -150,10 +139,6 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             songPicked(view);
-//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//            intent.putExtra(ARTIST, songsList.get(position).getArtist());
-//            intent.putExtra(SONG, songsList.get(position).getTitle());
-//            startActivity(intent);
         }
     };
 

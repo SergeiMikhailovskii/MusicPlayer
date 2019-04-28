@@ -28,7 +28,8 @@ public class SongLyricsActivity extends AppCompatActivity {
             lyricsTextView.setText(cursor.getString(idLyricsIndex));
             database.close();
         }catch (RuntimeException e){
-            Toast.makeText(getApplicationContext(), "There's no text in database. Download it!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.show_lyrics_runtime_exception),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }

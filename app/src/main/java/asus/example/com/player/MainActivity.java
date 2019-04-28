@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void onPrevClick(final View view){
+    private void onPrevClick(final View view) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         thread.run();
     }
 
-    private void onPlayClick(){
+    private void onPlayClick() {
 //        Runnable runnable = new Runnable() {
 //            @Override
 //            public void run() {
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }
 
-    private void onNextClick(final View view){
+    private void onNextClick(final View view) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         thread.run();
     }
 
-    private void onListClick(){
+    private void onListClick() {
         Intent intent = new Intent(this, ListOfSongsActivity.class);
         startActivity(intent);
     }
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.prev:
                 onPrevClick(v);
                 break;
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        int seconds = seekBar.getProgress()*SONG_LENGTH/100;
+        int seconds = seekBar.getProgress() * SONG_LENGTH / 100;
         @SuppressLint("DefaultLocale")
         String result = DateUtils.formatElapsedTime(seconds);
         curTime.setText(result);
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar){
+    public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 }
