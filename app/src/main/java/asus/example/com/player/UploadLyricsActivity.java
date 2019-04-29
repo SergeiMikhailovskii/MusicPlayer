@@ -31,6 +31,7 @@ public class UploadLyricsActivity extends AppCompatActivity {
     private EditText titleEdit;
     private EditText lyricsEdit;
     private SQLiteDatabase database;
+    private boolean areLyricsFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +56,16 @@ public class UploadLyricsActivity extends AppCompatActivity {
     private View.OnClickListener downloadClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), getString(R.string.download_clicked), Toast.LENGTH_SHORT).show();
             try {
                 lyrics = new NetworkLyricsDownload().execute(artist, title).get();
                 lyricsEdit.setText(lyrics);
+                if (lyrics.equals("")) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.lyrics_not_found), Toast.LENGTH_SHORT)
+                            .show();
+                    areLyricsFound = false;
+                } else {
+                    areLyricsFound = true;
+                }
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -70,15 +77,19 @@ public class UploadLyricsActivity extends AppCompatActivity {
     private View.OnClickListener saveClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String artist = artistEdit.getText().toString();
-            String title = titleEdit.getText().toString();
-            contentValues.put(Constants.SONG_TITLE, title);
-            contentValues.put(Constants.SONG_ARTIST, artist);
-            contentValues.put(Constants.SONG_LYRICS, lyrics);
-            database.insert(Constants.LYRICS_TABLE, null, contentValues);
-            database.close();
-            Toast.makeText(getApplicationContext(), getString(R.string.save_clicked), Toast.LENGTH_SHORT).show();
-
+            if (areLyricsFound) {
+                String artist = artistEdit.getText().toString();
+                String title = titleEdit.getText().toString();
+                contentValues.put(Constants.SONG_TITLE, title);
+                contentValues.put(Constants.SONG_ARTIST, artist);
+                contentValues.put(Constants.SONG_LYRICS, lyrics);
+                database.insert(Constants.LYRICS_TABLE, null, contentValues);
+                database.close();
+                Toast.makeText(getApplicationContext(), getString(R.string.save_clicked), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.not_save_lyrics), Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     };
 
@@ -97,6 +108,7 @@ public class UploadLyricsActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             String result = null;
             try {
+
                 String artist = strings[Constants.ARTIST_POSITION];
                 String artistArr[] = artist.split(" ");
                 String title = strings[Constants.TITLE_POSITION];

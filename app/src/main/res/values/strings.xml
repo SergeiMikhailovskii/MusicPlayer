@@ -16,6 +16,9 @@
     <string name="download_clicked">Download clicked</string>
     <string name="save_clicked">Save clicked</string>
     <string name="show_lyrics_runtime_exception">There\'s no text in database. Download it!</string>
+    <string name="lyrics_not_found">Lyrics not found</string>
+    <string name="not_save_lyrics">You can\'t save lyrics!</string>
+    <string name="shuffle">Shuffle</string>
     <string-array name="context_menu_listview">
         <item>Upload lyrics</item>
         <item>Show lyrics</item>

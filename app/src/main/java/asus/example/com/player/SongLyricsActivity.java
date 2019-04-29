@@ -5,8 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Objects;
 
 public class SongLyricsActivity extends AppCompatActivity {
 
@@ -14,6 +17,9 @@ public class SongLyricsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_song_lyrics);
         super.onCreate(savedInstanceState);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         String songName = getIntent().getStringExtra(Constants.TITLE);
         TextView lyricsTextView = findViewById(R.id.lyrics_textview);
         LyricsDatabase lyricsDatabase = new LyricsDatabase(getApplicationContext());

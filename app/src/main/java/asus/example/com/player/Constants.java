@@ -1,6 +1,6 @@
 package asus.example.com.player;
 
-class Constants {
+final class Constants {
     static final String ACTION_PREV = "PREVIOUS";
     static final String ACTION_PLAY = "PLAY";
     static final String ACTION_NEXT = "NEXT";

@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,15 +35,18 @@ import java.util.Comparator;
 import java.util.Objects;
 
 
-public class ListOfSongsActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
+public class ListOfSongsActivity extends AppCompatActivity
+        implements MediaController.MediaPlayerControl {
 
-    private       ArrayList<Song> songsList;
-    private       MyService       musicService;
-    private       Intent          playIntent;
-    private       boolean         musicBounds    = false;
-    private       MusicController controller;
-    private       boolean         paused         = false;
-    private       boolean         playbackPaused = false;
+    private ArrayList<Song> songsList;
+    private MyService musicService;
+    private Intent playIntent;
+    private boolean musicBounds = false;
+    private MusicController controller;
+    private boolean paused = false;
+    private boolean playbackPaused = false;
+    private boolean isShuffled = false;
+    private MenuItem shuffleItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +54,12 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         setContentView(R.layout.activity_list_of_songs);
         ListView songsListView = findViewById(R.id.songList);
         songsList = new ArrayList<>();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (isStoragePermissionGranted()) {
             getSongsList();
         }
-        Collections.sort(songsList, new Comparator<Song>() {
-            @Override
-            public int compare(Song o1, Song o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
-        });
+        sortArrayList();
         SongAdapter adapter = new SongAdapter(this, songsList);
         songsListView.setAdapter(adapter);
         songsListView.setOnItemClickListener(onClickListener);
@@ -72,7 +73,7 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
     @Override
     protected void onStart() {
         super.onStart();
-        if (playIntent == null){
+        if (playIntent == null) {
             playIntent = new Intent(this, MyService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
@@ -86,9 +87,9 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        if (paused){
+        if (paused) {
             setController();
             paused = false;
         }
@@ -102,22 +103,22 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         controller.hide();
     }
 
-    public void getSongsList(){
+    public void getSongsList() {
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         @SuppressLint("Recycle")
-        Cursor musicCursor = musicResolver.query(musicUri,null,null,null,null);
-        if (musicCursor!=null && musicCursor.moveToFirst()){
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        if (musicCursor != null && musicCursor.moveToFirst()) {
             int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
 
-            do{
+            do {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
                 songsList.add(new Song(thisId, thisTitle, thisArtist));
-            }while (musicCursor.moveToNext());
+            } while (musicCursor.moveToNext());
         }
     }
 
@@ -135,13 +136,12 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         }
     }
 
-    private AdapterView.OnItemClickListener onClickListener = new AdapterView.OnItemClickListener(){
+    private AdapterView.OnItemClickListener onClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             songPicked(view);
         }
     };
-
 
 
     private ServiceConnection musicConnection = new ServiceConnection() {
@@ -159,10 +159,10 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         }
     };
 
-    public void songPicked(View view){
+    public void songPicked(View view) {
         musicService.setSong(Integer.parseInt(view.getTag().toString()));
         musicService.playSong();
-        if (playbackPaused){
+        if (playbackPaused) {
             setController();
             playbackPaused = false;
         }
@@ -181,10 +181,9 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public int getDuration() {
-        if (musicService!=null && musicService.isPlaying() && musicBounds){
+        if (musicService != null && musicService.isPlaying() && musicBounds) {
             return musicService.getDur();
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -202,10 +201,9 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public boolean isPlaying() {
-        if (musicService!=null && musicBounds){
+        if (musicService != null && musicBounds) {
             return musicService.isPlaying();
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -235,7 +233,7 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         return 0;
     }
 
-    private void setController(){
+    private void setController() {
         if (controller == null) {
             controller = new MusicController(this);
         }
@@ -255,18 +253,18 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
         controller.setEnabled(true);
     }
 
-    private void playNext(){
+    private void playNext() {
         musicService.playNext();
-        if (playbackPaused){
+        if (playbackPaused) {
             setController();
             playbackPaused = false;
         }
         controller.show(0);
     }
 
-    private void playPrev(){
+    private void playPrev() {
         musicService.playPrev();
-        if (playbackPaused){
+        if (playbackPaused) {
             setController();
             playbackPaused = false;
         }
@@ -283,25 +281,23 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
     private BroadcastReceiver NotificationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Objects.equals(intent.getAction(), Constants.ACTION_PREV)){
+            if (Objects.equals(intent.getAction(), Constants.ACTION_PREV)) {
                 playPrev();
-            }
-            else if (Objects.equals(intent.getAction(), Constants.ACTION_NEXT)){
+            } else if (Objects.equals(intent.getAction(), Constants.ACTION_NEXT)) {
                 playNext();
-            }
-            else if (Objects.equals(intent.getAction(), Constants.ACTION_PLAY)){
+            } else if (Objects.equals(intent.getAction(), Constants.ACTION_PLAY)) {
                 start();
             }
         }
     };
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
-        if (view.getId() == R.id.songList){
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        if (view.getId() == R.id.songList) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             menu.setHeaderTitle(songsList.get(info.position).getTitle());
             String[] menuItems = getResources().getStringArray(R.array.context_menu_listview);
-            for (int i = 0; i<menuItems.length;i++){
+            for (int i = 0; i < menuItems.length; i++) {
                 menu.add(Menu.NONE, i, i, menuItems[i]);
             }
 
@@ -309,29 +305,66 @@ public class ListOfSongsActivity extends AppCompatActivity implements MediaContr
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem menuItem){
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
+    public boolean onContextItemSelected(MenuItem menuItem) {
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
         if (menuItem.getItemId() == Constants.UPLOAD_POSITION) {
             onUploadClick(info.position);
-        }
-        else if (menuItem.getItemId() == Constants.SHOW_POSITION){
+        } else if (menuItem.getItemId() == Constants.SHOW_POSITION) {
             onShowClick(info.position);
         }
 
         return true;
     }
 
-    private void onUploadClick(int position){
+    private void onUploadClick(int position) {
         Intent intent = new Intent(this, UploadLyricsActivity.class);
         intent.putExtra(Constants.TITLE, songsList.get(position).getTitle());
         intent.putExtra(Constants.ARTIST, songsList.get(position).getArtist());
         startActivity(intent);
     }
 
-    private void onShowClick(int position){
+    private void onShowClick(int position) {
         Intent intent = new Intent(this, SongLyricsActivity.class);
         intent.putExtra(Constants.TITLE, songsList.get(position).getTitle());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.shuffle){
+            onShuffleClick();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.list_of_song_menu, menu);
+        shuffleItem = menu.findItem(R.id.shuffle);
+        return true;
+    }
+
+    private void onShuffleClick(){
+        if (!isShuffled) {
+            Collections.shuffle(songsList);
+            shuffleItem.setIcon(R.drawable.shuffle_white);
+            isShuffled = true;
+        }
+        else {
+            shuffleItem.setIcon(R.drawable.shuffle);
+            isShuffled = false;
+            sortArrayList();
+        }
+    }
+
+    private void sortArrayList(){
+        Collections.sort(songsList, new Comparator<Song>() {
+            @Override
+            public int compare(Song o1, Song o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+        });
     }
 
 
