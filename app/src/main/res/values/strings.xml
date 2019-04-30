@@ -19,8 +19,10 @@
     <string name="lyrics_not_found">Lyrics not found</string>
     <string name="not_save_lyrics">You can\'t save lyrics!</string>
     <string name="shuffle">Shuffle</string>
+    <string name="loop">Loop</string>
     <string-array name="context_menu_listview">
         <item>Upload lyrics</item>
         <item>Show lyrics</item>
+        <item>Play artist songs</item>
     </string-array>
 </resources>

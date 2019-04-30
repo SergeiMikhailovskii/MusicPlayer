@@ -3,7 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UploadLyricsActivity" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".UploadLyricsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0000FF"
+        app:titleTextColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/title_textview"
@@ -11,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="@string/title"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/toolbar"/>
 
     <EditText
         android:id="@+id/title_edittext"
@@ -23,6 +32,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:background="@drawable/edittext_background"
+        android:padding="8dp"
         tools:ignore="Autofill,TextFields" />
 
     <TextView
@@ -43,6 +53,7 @@
         android:layout_marginTop="16dp"
         android:hint="@string/artist"
         android:background="@drawable/edittext_background"
+        android:padding="8dp"
         tools:ignore="Autofill, TextFields" />
 
     <Button
@@ -85,6 +96,7 @@
         android:gravity="center"
         android:layout_above="@id/save_button"
         android:background="@drawable/edittext_background"
+        android:padding="8dp"
         tools:ignore="Autofill,TextFields" />
 
 </RelativeLayout>

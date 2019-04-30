@@ -20,7 +20,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MyService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+public class MyService extends Service implements MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
     private       MediaPlayer     player;
     private       ArrayList<Song> songs;
     private       int             songPos;
@@ -170,6 +171,10 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
             songPos=0;
         }
         playSong();
+    }
+
+    public void setLooping(boolean isLooping){
+        player.setLooping(isLooping);
     }
 
 

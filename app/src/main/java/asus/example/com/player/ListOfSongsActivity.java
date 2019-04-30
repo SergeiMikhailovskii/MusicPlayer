@@ -21,6 +21,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,13 +47,17 @@ public class ListOfSongsActivity extends AppCompatActivity
     private boolean paused = false;
     private boolean playbackPaused = false;
     private boolean isShuffled = false;
+    private boolean isLooped = false;
     private MenuItem shuffleItem;
+    private MenuItem loopItem;
+    private ListView songsListView;
+    private ArrayList<Song> artistArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_songs);
-        ListView songsListView = findViewById(R.id.songList);
+        songsListView = findViewById(R.id.songList);
         songsList = new ArrayList<>();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,8 +65,7 @@ public class ListOfSongsActivity extends AppCompatActivity
             getSongsList();
         }
         sortArrayList();
-        SongAdapter adapter = new SongAdapter(this, songsList);
-        songsListView.setAdapter(adapter);
+        createAdapter(songsList);
         songsListView.setOnItemClickListener(onClickListener);
         registerForContextMenu(songsListView);
         setController();
@@ -308,13 +312,30 @@ public class ListOfSongsActivity extends AppCompatActivity
     public boolean onContextItemSelected(MenuItem menuItem) {
         AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
-        if (menuItem.getItemId() == Constants.UPLOAD_POSITION) {
-            onUploadClick(info.position);
-        } else if (menuItem.getItemId() == Constants.SHOW_POSITION) {
-            onShowClick(info.position);
+        switch (menuItem.getItemId()){
+            case Constants.UPLOAD_POSITION:
+                onUploadClick(info.position);
+                break;
+            case Constants.SHOW_POSITION:
+                onShowClick(info.position);
+                break;
+            case Constants.ARTIST_PLAY_POSITION:
+                onPlayArtistClick(info.position);
+                break;
+
         }
 
         return true;
+    }
+
+    private void onPlayArtistClick(int position) {
+        artistArray = new ArrayList<>();
+        for (int i = 0; i<songsList.size();i++){
+            if (songsList.get(i).getArtist().equalsIgnoreCase(songsList.get(position).getArtist())){
+                artistArray.add(songsList.get(i));
+            }
+        }
+        createAdapter(artistArray);
     }
 
     private void onUploadClick(int position) {
@@ -332,9 +353,15 @@ public class ListOfSongsActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.shuffle){
-            onShuffleClick();
+        switch (item.getItemId()){
+            case R.id.shuffle:
+                onShuffleClick();
+                break;
+            case R.id.loop:
+                onLoopClick();
+                break;
         }
+
         return true;
     }
 
@@ -342,6 +369,7 @@ public class ListOfSongsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_of_song_menu, menu);
         shuffleItem = menu.findItem(R.id.shuffle);
+        loopItem = menu.findItem(R.id.loop);
         return true;
     }
 
@@ -350,11 +378,13 @@ public class ListOfSongsActivity extends AppCompatActivity
             Collections.shuffle(songsList);
             shuffleItem.setIcon(R.drawable.shuffle_white);
             isShuffled = true;
+            createAdapter(songsList);
         }
         else {
             shuffleItem.setIcon(R.drawable.shuffle);
             isShuffled = false;
             sortArrayList();
+            createAdapter(songsList);
         }
     }
 
@@ -365,6 +395,25 @@ public class ListOfSongsActivity extends AppCompatActivity
                 return o1.getTitle().compareTo(o2.getTitle());
             }
         });
+    }
+
+    private void onLoopClick(){
+        if (!isLooped){
+            loopItem.setIcon(R.drawable.loop_white);
+            isLooped = true;
+            musicService.setLooping(true);
+        }
+        else {
+            loopItem.setIcon(R.drawable.loop_black);
+            isLooped = false;
+            musicService.setLooping(false);
+        }
+
+    }
+
+    private void createAdapter(ArrayList<Song> list){
+        SongAdapter adapter = new SongAdapter(this, list);
+        songsListView.setAdapter(adapter);
     }
 
 

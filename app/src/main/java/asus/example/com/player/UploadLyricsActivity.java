@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 
@@ -42,8 +44,12 @@ public class UploadLyricsActivity extends AppCompatActivity {
         lyricsEdit = findViewById(R.id.lyrics_edittext);
         Button downloadButton = findViewById(R.id.download_button);
         Button saveButton = findViewById(R.id.save_button);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         title = getIntent().getStringExtra(Constants.TITLE);
         artist = getIntent().getStringExtra(Constants.ARTIST);
+        getSupportActionBar().setTitle(title);
         downloadButton.setOnClickListener(downloadClick);
         saveButton.setOnClickListener(saveClick);
         titleEdit.setText(title);

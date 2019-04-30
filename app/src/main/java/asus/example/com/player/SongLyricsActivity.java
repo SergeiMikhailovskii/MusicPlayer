@@ -20,14 +20,15 @@ public class SongLyricsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        String songName = getIntent().getStringExtra(Constants.TITLE);
+        String title = getIntent().getStringExtra(Constants.TITLE);
         TextView lyricsTextView = findViewById(R.id.lyrics_textview);
+        getSupportActionBar().setTitle(title);
         LyricsDatabase lyricsDatabase = new LyricsDatabase(getApplicationContext());
         SQLiteDatabase database = lyricsDatabase.getWritableDatabase();
         try {
             @SuppressLint("Recycle")
             Cursor cursor = database.query("LYRICS", new String[]{"SONG_LYRICS"},
-                    "SONG_TITLE = ?", new String[]{songName}, null,
+                    "SONG_TITLE = ?", new String[]{title}, null,
                     null, null);
             cursor.moveToFirst();
             int idLyricsIndex = cursor.getColumnIndex("SONG_LYRICS");

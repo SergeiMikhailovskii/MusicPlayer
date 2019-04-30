@@ -16,6 +16,7 @@ final class Constants {
     static final String ACTION_PAUSE = "PAUSE";
     static final int UPLOAD_POSITION = 0;
     static final int SHOW_POSITION = 1;
+    static final int ARTIST_PLAY_POSITION = 2;
     static final int ARTIST_POSITION = 0;
     static final int TITLE_POSITION = 1;
     static final int PREV_CODE = 0;
